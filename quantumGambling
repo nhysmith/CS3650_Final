@@ -1,0 +1,158 @@
+import qiskit
+from qiskit import *
+
+# q1: Quantum Register with 3 qubits.
+q1 = QuantumRegister(3, 'q1')
+# c1: Classical Register with 3 bits.
+c1 = ClassicalRegister(3, 'c1')
+
+# Create a Quantum Circuit acting on the q1 register
+# dice1 circuit
+circ1 = QuantumCircuit(q1, c1)
+
+# Add a H gate on the qubits, putting them in superposition.
+circ1.h(q1[0])
+circ1.h(q1[1])
+circ1.h(q1[2])
+
+# map the quantum measurement to the classical bits
+circ1.measure(q1,c1)
+
+backend_sim = BasicAer.get_backend('qasm_simulator')
+result = execute(circ1, backend_sim).result()
+counts = result.get_counts(circ1)
+
+import operator
+maxValue = max(counts.items(), key=operator.itemgetter(1))[0]
+
+# (maxValue % 4) + 1
+if maxValue == '000':
+	dice1 = 1
+elif maxValue == '001':
+	dice1 = 2
+elif maxValue == '010':
+	dice1 = 3
+elif maxValue == '011':
+	dice1 = 4
+elif maxValue == '100':
+	dice1 = 1
+elif maxValue == '101':
+	dice1 = 2
+elif maxValue == '110':
+	dice1 = 3
+elif maxValue == '111':
+	dice1 = 4
+
+print("Dice #1 = " + str(dice1))
+
+# q2: Quantum Register with 3 qubits.
+q2 = QuantumRegister(3, 'q2')
+# c2: Classical Register with 3 bits.
+c2 = ClassicalRegister(3, 'c2')
+
+# Create a Quantum Circuit acting on the q1 register
+circ2 = QuantumCircuit(q2, c2)
+
+# Add a H gate on the qubits, putting them in superposition.
+circ2.h(q2[0])
+circ2.h(q2[1])
+circ2.h(q2[2])
+
+# map the quantum measurement to the classical bits
+circ2.measure(q2,c2)
+
+result2 = execute(circ2, backend_sim).result()
+counts2 = result2.get_counts(circ2)
+
+maxValue2 = max(counts2.items(), key=operator.itemgetter(1))[0]
+
+# (maxValue % 4) + 1
+if maxValue2 == '000':
+	dice2 = 1
+elif maxValue2 == '001':
+	dice2 = 2
+elif maxValue2 == '010':
+	dice2 = 3
+elif maxValue2 == '011':
+	dice2 = 4
+elif maxValue2 == '100':
+	dice2 = 1
+elif maxValue2 == '101':
+	dice2 = 2
+elif maxValue2 == '110':
+	dice2 = 3
+elif maxValue2 == '111':
+	dice2 = 4
+
+
+print("Dice #2 = " + str(dice2))
+
+
+
+if dice1 >= dice2:
+	print("Player 1 wins the dice toss")
+	currentPlayer = 1
+else:
+	print("Player 2 wins the dice toss")
+	currentPlayer = 2
+
+score1 = 0
+score2 = 0
+
+while score1 < 5 and score2 < 5:
+	print("player " + str(currentPlayer) + " turn")
+
+	# q3: Quantum Register with 2 qubits.
+	q3 = QuantumRegister(2, 'q3')
+	# c3: Classical Register with 2 bits.
+	c3 = ClassicalRegister(2, 'c3')
+
+	# Create a Quantum Circuit acting on the q1 register
+	circ3 = QuantumCircuit(q3, c3)
+
+	# Add a H gate on the qubits, putting them in superposition.
+	circ3.h(q3[0])
+  # Add a H gate on the qubits, putting them in superposition.
+	circ3.cx(q3[0], q3[1])
+	
+	# map the quantum measurement to the classical bits
+	circ3.measure(q3,c3)
+	
+
+	
+	result3 = execute(circ3, backend_sim).result()
+	counts3 = result3.get_counts(circ3)
+
+	maxValue3 = max(counts3.items(), key=operator.itemgetter(1))[0]
+	if maxValue3 == '00':
+		gamble = 0
+	elif maxValue3 == '11':
+		gamble = 3
+
+	choice = input('Choose either to (1)add one point to your score or (2)gamble with your score' )
+	
+	if choice == '1':
+		scoreIncrease = 1
+	elif choice == '2':
+		scoreIncrease = gamble
+		print("Gamble value = " + str(gamble))
+
+	#print(scoreIncrease)
+	if currentPlayer == 1:
+		score1 = score1 + scoreIncrease
+		if score1 >= 5:
+			print("Player 1 score: " + str(score1))
+			print("Player 1 wins!")
+		else:
+			#print(score1)
+			print("Player 1 score: " + str(score1))
+		currentPlayer = 2
+	else:
+		score2 = score2 + scoreIncrease
+		if score2 >= 5:
+			print("Player 2 score: " + str(score2))
+			print("Player 2 wins!")
+		else:
+			#print(score2)
+			print("Player 2 score: " + str(score2))
+		currentPlayer = 1
